@@ -1,4 +1,4 @@
-SinOsc a => Gain g => dac;
+SinOsc a => Gain g => Envelope r => dac;
 SinOsc b => g;
 SinOsc c => g;
 SinOsc d => g;
@@ -6,22 +6,31 @@ SinOsc e => g;
 
 .3 => g.gain;
 
-[ 60, 60, 67, 67, 69, 69, 67, 72] @=> int notes[];
+1000::ms => dur beat;
+
+[ 64, 64, 67, 67, 69, 69, 67, 65, 65, 64, 64, 62, 62, 60] @=> int notes[];
+[ .5, .5, .5, .5, .5, .5, 1., .5, .5, .5, .5, .5, .5, 2.  ] @=> float rhythm[];
 
  0 => int i;
 
-while( i < 8)
+while( i < notes.cap() )
 {
 
 Std.mtof(notes[i]) => float f;
 
 f => a.freq;
 f * 2 => b.freq;
-f * 8 => c.freq;
-f * 4 => d.freq;
-f * 6 => e.freq;
+f * 3 => c.freq;
+f * 7 => d.freq;
+f * 11 => e.freq;
 
-500::ms => now;
+r.keyOn();
+
+(rhythm[i]::beat) - 50::ms => now;
+
+r.keyOff();
+
+50::ms => now;
 
 <<< i >>>;
 
